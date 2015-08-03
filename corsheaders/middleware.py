@@ -113,14 +113,6 @@ class CorsMiddleware(object):
                 if model.objects.filter(cors=url.netloc).exists():
                     response[ACCESS_CONTROL_ALLOW_ORIGIN] = origin
 
-            if (not settings.CORS_ORIGIN_ALLOW_ALL and
-                    self.origin_not_found_in_white_lists(origin, url)):
-                return response
-
-            response[ACCESS_CONTROL_ALLOW_ORIGIN] = "*" if (
-                settings.CORS_ORIGIN_ALLOW_ALL and
-                not settings.CORS_ALLOW_CREDENTIALS) else origin
-
             if len(settings.CORS_EXPOSE_HEADERS):
                 response[ACCESS_CONTROL_EXPOSE_HEADERS] = ', '.join(
                     settings.CORS_EXPOSE_HEADERS)
@@ -136,6 +128,14 @@ class CorsMiddleware(object):
                 if settings.CORS_PREFLIGHT_MAX_AGE:
                     response[ACCESS_CONTROL_MAX_AGE] = \
                         settings.CORS_PREFLIGHT_MAX_AGE
+
+            if (not settings.CORS_ORIGIN_ALLOW_ALL and
+                    self.origin_not_found_in_white_lists(origin, url)):
+                return response
+
+            response[ACCESS_CONTROL_ALLOW_ORIGIN] = "*" if (
+                settings.CORS_ORIGIN_ALLOW_ALL and
+                not settings.CORS_ALLOW_CREDENTIALS) else origin
 
         return response
 
